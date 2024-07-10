@@ -37,14 +37,14 @@ jobs:
 
           WORKSPACE_ID=$(echo $RESPONSE | jq -r '.data[0].id')
 
-          if [ -z "$WORKSPACE_ID" ]; then
+          if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" == "null" ]; then
             echo "Workspace $WORKSPACE_NAME not found."
             exit 1
           fi
 
-          echo "::set-output name=workspace_id::$WORKSPACE_ID"
+          echo "WORKSPACE_ID=$WORKSPACE_ID" >> $GITHUB_ENV
 
       - name: Print Workspace ID
         run: |
           echo "Retrieved Workspace ID:"
-          echo "${{ steps.get_workspace_id.outputs.workspace_id }}"
+          echo "${{ env.WORKSPACE_ID }}"
