@@ -25,7 +25,7 @@ jobs:
       - name: Retrieve Workspaces
         id: get_workspaces
         run: |
-          ORGANIZATION="${{ env.TF_ORG }}"
+          ORGANIZATION="Mlops_Amani"
           
           RESPONSE=$(curl -sS \
             --header "Authorization: Bearer ${{ env.TF_API_TOKEN }}" \
