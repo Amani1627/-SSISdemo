@@ -25,17 +25,25 @@ jobs:
       - name: Retrieve Workspaces
         id: get_workspaces
         run: |
-          ORGANIZATION="Mlops_Amani"
-          
-          RESPONSE=$(curl -sS \
-            --header "Authorization: Bearer ${{ env.TF_API_TOKEN }}" \
-            --header "Content-Type: application/vnd.api+json" \
-            "https://app.terraform.io/api/v2/organizations/Mlop_Amani/workspaces")
+          WORKSPACE_NAME="preprod-workspace"
+          ORGANIZATION="your-terraform-org
 
-          echo $RESPONSE | jq '.data[] | {id: .id, name: .attributes.name}'
+         # Query Terraform Cloud API for workspace details
+        WORKSPACE_ID=$(curl -sS --header "Authorization: Bearer $TFC_API_TOKEN" \
 
-          echo "::set-output name=workspaces::$RESPONSE"
+                       --header "Content-Type: application/vnd.api+json" \
 
+                       "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/workspaces?filter[name][$eq]=$WORKSPACE_NAME" | jq -r '.data[0].id')
+
+ 
+
+         if [ -z "$WORKSPACE_ID" ]; then
+
+           echo "Workspace $WORKSPACE_NAME not found."
+
+           exit 1
+
+         fi
       - name: Print Workspaces
         run: |
           echo "Retrieved Workspaces:"
