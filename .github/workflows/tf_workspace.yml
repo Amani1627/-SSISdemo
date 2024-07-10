@@ -33,7 +33,7 @@ jobs:
           RESPONSE=$(curl -sS \
             --header "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
             --header "Content-Type: application/vnd.api+json" \
-            "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/workspaces?filter[name][$eq]=$WORKSPACE_NAME")
+            "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/workspaces?filter%5Bname%5D%5Beq%5D=$WORKSPACE_NAME")
 
           WORKSPACE_ID=$(echo $RESPONSE | jq -r '.data[0].id')
 
