@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: List Terraform Cloud Workspaces
 
 on:
   push:
@@ -6,24 +6,23 @@ on:
       - main
 
 jobs:
-  terraform:
+  list-workspaces:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-    
-    - name: Terraform Init
-      run: |
-        terraform init
+      - name: Checkout repository
+        uses: actions/checkout@v2
         
-    - name: Terraform Apply
-      run: |
-        terraform workspace select amani_workspace
-        terraform plan -out=tfplan
-        terraform apply tfplan
+      - name: Set up Terraform CLI
+        run: |
+          mkdir ~/.terraform.d
+          echo '{ "credentials": { "app.terraform.io": { "token": "${{ secrets.TF_API_TOKEN }}" } }, "provider": { "app.terraform.io": { "organization": "${{ secrets.TF_ORGANIZATION }}" } } }' > ~/.terraform.d/credentials.tfrc.json
+        
+      - name: Initialize Terraform
+        run: terraform init
+        
+      - name: List Workspaces
+        run: |
+          workspaces=$(terraform workspace list -json | jq -r '.[]')
+          echo "Terraform Cloud Workspaces:"
+          echo "$workspaces"
