@@ -1,4 +1,4 @@
-name: Retrieve and Print Terraform Workspaces
+name: Retrieve Terraform Workspace ID
 
 on:
   push:
@@ -7,12 +7,13 @@ on:
   workflow_dispatch:
 
 env:
-  TF_API_TOKEN: ${{ secrets.TFC_API_TOKEN }}
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
   TF_ORG: "Mlops_Amani"
+  WORKSPACE_NAME: "tfc_re_bootstrap"
 
 jobs:
-  retrieve-workspaces:
-    name: Retrieve Terraform Workspaces
+  retrieve-workspace-id:
+    name: Retrieve Terraform Workspace ID
     runs-on: ubuntu-latest
 
     steps:
@@ -22,21 +23,28 @@ jobs:
       - name: Set up Terraform Cloud credentials
         run: echo "credentials \"app.terraform.io\" { token = \"${{ env.TF_API_TOKEN }}\" }" > $HOME/.terraformrc
 
-      - name: Retrieve Workspaces
-        id: get_workspaces
+      - name: Retrieve Workspace ID
+        id: get_workspace_id
         run: |
           ORGANIZATION="${{ env.TF_ORG }}"
-          
+          WORKSPACE_NAME="${{ env.WORKSPACE_NAME }}"
+
+          # Query Terraform Cloud API for workspace details
           RESPONSE=$(curl -sS \
-            --header "Authorization: Bearer ${{ env.TF_API_TOKEN }}" \
+            --header "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
             --header "Content-Type: application/vnd.api+json" \
-            "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/workspaces")
+            "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/workspaces?filter[name][$eq]=$WORKSPACE_NAME")
 
-          echo $RESPONSE | jq '.data[] | {id: .id, name: .attributes.name}'
+          WORKSPACE_ID=$(echo $RESPONSE | jq -r '.data[0].id')
 
-          echo "::set-output name=workspaces::$RESPONSE"
+          if [ -z "$WORKSPACE_ID" ]; then
+            echo "Workspace $WORKSPACE_NAME not found."
+            exit 1
+          fi
 
-      - name: Print Workspaces
+          echo "::set-output name=workspace_id::$WORKSPACE_ID"
+
+      - name: Print Workspace ID
         run: |
-          echo "Retrieved Workspaces:"
-          echo "${{ steps.get_workspaces.outputs.workspaces }}" | jq '.data[] | "\(.attributes.name): \(.id)"'
+          echo "Retrieved Workspace ID:"
+          echo "${{ steps.get_workspace_id.outputs.workspace_id }}"
