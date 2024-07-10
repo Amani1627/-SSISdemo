@@ -8,7 +8,7 @@ on:
 
 env:
   TF_API_TOKEN: ${{ secrets.TFC_API_TOKEN }}
-  TF_ORG: "your-terraform-cloud-organization"
+  TF_ORG: "Mlops_Amani"
 
 jobs:
   retrieve-workspaces:
