@@ -14,7 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: print working directory
+        run:  echo "current eorking directory : $(pwd)"
       - name: Trigger Terraform Plan
         env:
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}  # Your Terraform Cloud API token
