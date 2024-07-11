@@ -18,7 +18,7 @@ jobs:
       - name: Trigger Terraform Plan
         env:
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}  # Your Terraform Cloud API token
-          TF_WORKSPACE: "Mlops_Amani"        # Replace with your Terraform workspace name
+          TF_WORKSPACE: "trigger-workspace"        # Replace with your Terraform workspace name
         run: |
           curl -X POST \
             -H "Authorization: Bearer $TF_API_TOKEN" \
@@ -27,7 +27,7 @@ jobs:
               "data": {
                 "attributes": {
                   "is-destroy": false,
-                  "message": "Triggered Terraform plan by GitHub Actions",
+                  "message": "Triggered by Amani",
                   "speculative": true
                 },
                 "type": "runs"
