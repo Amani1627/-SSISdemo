@@ -12,10 +12,10 @@ terraform {
   required_version = ">= 1.1.0"
 }
 
-resource "random_pet" "sg" {}
+resource "random_pet" "sg2" {}
 
 resource "random_string" "random" {
-  length           = 16
+  length           = 10
   special          = true
   override_special = "/@£$"
 }
