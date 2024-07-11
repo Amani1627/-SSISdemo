@@ -28,7 +28,7 @@ jobs:
                 "attributes": {
                   "is-destroy": false,
                   "message": "Triggered by Amani",
-                  "speculative": true
+                  "plan-only": false
                 },
                 "type": "runs"
               }
