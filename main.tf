@@ -12,4 +12,4 @@ terraform {
   required_version = ">= 1.1.0"
 }
 
-resource "random_pet" "sg" {}
+resource "random_id" "sg" {}
