@@ -1,0 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: main
+ 
+jobs:
+  trigger_terraform_plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Trigger Terraform Plan
+        env:
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}  # Your Terraform Cloud API token
+          TF_WORKSPACE: "Mlops_Amani"        # Replace with your Terraform workspace name
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $TF_API_TOKEN" \
+            -H "Content-Type: application/vnd.api+json" \
+            -d '{
+              "data": {
+                "attributes": {
+                  "is-destroy": false,
+                  "message": "Triggered Terraform plan by GitHub Actions",
+                  "speculative": true
+                },
+                "type": "runs"
+              }
+            }' \
+            "https://app.terraform.io/api/v2/workspaces/${TF_WORKSPACE}/runs"
+  
